@@ -47,7 +47,7 @@ This step-by-step walkthrough is designed for judges, evaluators, and stakeholde
 1. **Navigate**: Go to **Privacy Check** (`/app/privacy-check`).
 2. **Action**: Paste the following test snippet containing sensitive synthetic credentials:
    ```text
-   Hi team, please use card 4532 0150 0000 0007 with SSN 000-12-3456 and API key sec_token_948172948123 to access the test server.
+   Hi team, please use card 4532 0150 0000 0000 with SSN 000-12-3456 and API key sk-live-948172948123 to access the test server.
    ```
 3. **Observe**:
    - The real-time findings table immediately detects:

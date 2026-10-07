@@ -107,7 +107,7 @@ export const BlindSpotsPage: React.FC = () => {
                     <span className="text-muted-foreground italic">None (Strictly isolated by browser)</span>
                   ) : (
                     <ul className="space-y-1">
-                      {item.canSee.map((c, idx) => (
+                      {item.canSee.map((c: string, idx: number) => (
                         <li key={idx} className="flex items-center gap-1.5 text-muted-foreground">
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                           <span>{c}</span>
@@ -122,7 +122,7 @@ export const BlindSpotsPage: React.FC = () => {
                     What TRUSTGUARD Cannot See:
                   </span>
                   <ul className="space-y-1">
-                    {item.cannotSee.map((c, idx) => (
+                    {item.cannotSee.map((c: string, idx: number) => (
                       <li key={idx} className="flex items-center gap-1.5 text-muted-foreground">
                         <XCircle className="w-3.5 h-3.5 text-red-500 shrink-0" />
                         <span>{c}</span>

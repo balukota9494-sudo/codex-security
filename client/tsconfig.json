@@ -14,7 +14,13 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@trustguard/shared": ["./src/shared/index.ts", "../shared/src/index.ts"],
+      "@trustguard/shared/*": ["./src/shared/*", "../shared/src/*"]
+    }
   },
   "include": ["src"]
 }

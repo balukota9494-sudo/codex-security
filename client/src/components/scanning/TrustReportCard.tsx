@@ -116,7 +116,7 @@ export const TrustReportCard: React.FC<TrustReportCardProps> = ({
               <span>4. What You Should Do</span>
             </div>
             <ul className="text-sm text-foreground font-medium space-y-1">
-              {report.whatTheUserShouldDo.map((step, idx) => (
+              {report.whatTheUserShouldDo.map((step: string, idx: number) => (
                 <li key={idx} className="flex items-start gap-2">
                   <span className="text-primary font-bold">•</span>
                   <span>{step}</span>
@@ -133,7 +133,7 @@ export const TrustReportCard: React.FC<TrustReportCardProps> = ({
             <span>5. What Could Not Be Checked (Blind Spots)</span>
           </div>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-muted-foreground">
-            {report.whatCouldNotBeChecked.map((blind, idx) => (
+            {report.whatCouldNotBeChecked.map((blind: string, idx: number) => (
               <li key={idx} className="flex items-start gap-1.5">
                 <span className="text-amber-500 font-bold">✕</span>
                 <span>{blind}</span>

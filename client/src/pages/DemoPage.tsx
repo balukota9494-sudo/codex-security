@@ -115,7 +115,7 @@ export const DemoPage: React.FC = () => {
   const privacyDemoFindings = [
     { piiType: "FINANCIAL" as const, maskedPreview: "****-****-****-4242", severity: "critical" as const },
     { piiType: "PASSWORD_LIKE" as const, maskedPreview: "••••••••", severity: "critical" as const },
-    { piiType: "API_KEY" as const, maskedPreview: "api_key_...9182", severity: "critical" as const },
+    { piiType: "API_KEY" as const, maskedPreview: "sk_live_...9182", severity: "critical" as const },
     { piiType: "EMAIL" as const, maskedPreview: "ad****@company.com", severity: "medium" as const },
   ];
 
@@ -227,7 +227,7 @@ export const DemoPage: React.FC = () => {
                   Simulated Input with Sensitive Tokens:
                 </span>
                 <p>
-                  &quot;Hello team, my card is 4532-0151-1283-4242, password is MyPass123!, and API key is api_token_test9182. Contact admin@company.com.&quot;
+                  &quot;Hello team, my card is 4532-0151-1283-4242, password is MyPass123!, and API key is sk_live_test9182. Contact admin@company.com.&quot;
                 </p>
               </div>
 

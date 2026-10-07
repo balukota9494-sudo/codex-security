@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://rxyxenrcccxbshcnkygf.supabase.co";
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ4eXhlbnJjY2N4YnNoY25reWdmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTI2ODE1MywiZXhwIjoyMTA2ODQ0MTUzfQ.9Vo_SgxGdBZWX6OBlnvYfkCWUXsOyqpnV99c6qsVugg";
 const DATABASE_URL = process.env.DATABASE_URL;
 
 async function run() {

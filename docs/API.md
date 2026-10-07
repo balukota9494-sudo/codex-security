@@ -109,7 +109,7 @@ Analyzes text snippets for sensitive data (PII, API keys, passwords, credentials
 - **Body**:
 ```json
 {
-  "content": "Contact me at user@example.com with key sec_token_12345",
+  "content": "Contact me at user@example.com with key sk-live-12345",
   "redact": true
 }
 ```

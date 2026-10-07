@@ -75,7 +75,7 @@ export const StructuredAnswerCard: React.FC<{
           <span>2. What Should I Do Now? (Immediate Steps)</span>
         </h5>
         <ul className="space-y-2">
-          {data.immediateSteps.map((step, idx) => (
+          {data.immediateSteps.map((step: string, idx: number) => (
             <li
               key={idx}
               className="p-3 rounded-xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 text-sm font-semibold text-foreground flex items-start gap-2.5"
@@ -97,7 +97,7 @@ export const StructuredAnswerCard: React.FC<{
             <span>3. What Should I Avoid?</span>
           </h5>
           <ul className="space-y-1.5">
-            {data.avoidActions.map((avoid, idx) => (
+            {data.avoidActions.map((avoid: string, idx: number) => (
               <li
                 key={idx}
                 className="p-2.5 rounded-lg bg-red-500/5 dark:bg-red-500/10 border border-red-500/20 text-xs font-medium text-foreground flex items-start gap-2"
@@ -118,7 +118,7 @@ export const StructuredAnswerCard: React.FC<{
             <span>4. What Should I Do Next? (Follow-up)</span>
           </h5>
           <ul className="space-y-1.5">
-            {data.nextSteps.map((next, idx) => (
+            {data.nextSteps.map((next: string, idx: number) => (
               <li
                 key={idx}
                 className="p-2.5 rounded-lg bg-muted/40 text-xs text-muted-foreground flex items-start gap-2"

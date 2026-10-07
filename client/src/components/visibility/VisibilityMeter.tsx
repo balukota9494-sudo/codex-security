@@ -59,7 +59,7 @@ export const VisibilityMeter: React.FC<{ visibility: SecurityVisibilityResult }>
             Uninspectable in Browser Mode:
           </span>
           <div className="flex flex-wrap gap-1.5">
-            {visibility.missingCritical.map((item, idx) => (
+            {visibility.missingCritical.map((item: string, idx: number) => (
               <span
                 key={idx}
                 className="text-[11px] px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-medium"
