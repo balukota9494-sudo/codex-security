@@ -34,6 +34,31 @@ export const LoginPage: React.FC = () => {
     }
   };
 
+  const handleDemoSignIn = async () => {
+    setErrorMessage(null);
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: "demo@trustguard.ai",
+        password: "Password123!",
+      });
+      if (error) {
+        setErrorMessage("Unable to sign in as demo user: " + error.message);
+      } else {
+        navigate("/app");
+      }
+    } catch {
+      setErrorMessage("Unable to connect to authentication service.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fillCredentials = (fillEmail: string, fillPass: string) => {
+    setEmail(fillEmail);
+    setPassword(fillPass);
+  };
+
   const handleDemoMode = () => {
     navigate("/demo");
   };
@@ -57,6 +82,45 @@ export const LoginPage: React.FC = () => {
             <span>{errorMessage}</span>
           </div>
         )}
+
+        {/* 1-Click Instant Demo Login */}
+        <button
+          type="button"
+          onClick={handleDemoSignIn}
+          disabled={loading}
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm shadow-md shadow-emerald-600/20 transition-all flex items-center justify-center gap-2"
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>Instant 1-Click Demo Sign In</span>
+        </button>
+
+        {/* Test Credentials Quick-Fill Cards */}
+        <div className="p-3.5 rounded-2xl border border-border/80 bg-muted/40 space-y-2">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center justify-between">
+            <span>Pre-Configured Accounts</span>
+            <span className="text-[10px] text-primary lowercase font-medium">Click to fill</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => fillCredentials("demo@trustguard.ai", "Password123!")}
+              className="p-2 rounded-xl border border-border hover:border-primary/50 bg-background text-left transition-colors"
+            >
+              <div className="text-[11px] font-bold text-foreground">🛡️ Demo User</div>
+              <div className="text-[10px] text-muted-foreground truncate">demo@trustguard.ai</div>
+              <div className="text-[9px] text-muted-foreground/75 font-mono">Password123!</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => fillCredentials("balukota9494@gmail.com", "Password123!")}
+              className="p-2 rounded-xl border border-border hover:border-primary/50 bg-background text-left transition-colors"
+            >
+              <div className="text-[11px] font-bold text-foreground">🔑 Admin User</div>
+              <div className="text-[10px] text-muted-foreground truncate">balukota9494@...</div>
+              <div className="text-[9px] text-muted-foreground/75 font-mono">Password123!</div>
+            </button>
+          </div>
+        </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-1.5">
@@ -126,7 +190,7 @@ export const LoginPage: React.FC = () => {
           className="w-full py-2.5 rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-700 dark:text-purple-300 font-bold text-xs hover:bg-purple-500/20 transition-all flex items-center justify-center gap-2"
         >
           <Sparkles className="w-4 h-4" />
-          <span>Launch Interactive Demo (No Sign In Required)</span>
+          <span>Launch Interactive Demo Sandbox (No Auth Needed)</span>
         </button>
 
         <p className="text-center text-xs text-muted-foreground">

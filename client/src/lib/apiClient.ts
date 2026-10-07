@@ -14,7 +14,20 @@ export async function apiRequest<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const { data: sessionData } = await supabase.auth.getSession();
-  const token = sessionData?.session?.access_token;
+  let token = sessionData?.session?.access_token;
+
+  // Seamless demo fallback: auto-sign-in if no active session exists
+  if (!token) {
+    try {
+      const { data: loginData } = await supabase.auth.signInWithPassword({
+        email: "demo@trustguard.ai",
+        password: "Password123!",
+      });
+      token = loginData?.session?.access_token;
+    } catch {
+      // Ignore if offline
+    }
+  }
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
