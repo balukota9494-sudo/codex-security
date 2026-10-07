@@ -1,0 +1,33 @@
+{
+  "name": "trustguard-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Security You Can See. Privacy You Can Control. AI You Can Trust.",
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=server & npm run dev --workspace=client",
+    "build": "npm run build --workspace=shared && npm run build --workspace=server && npm run build --workspace=client",
+    "typecheck": "npm run typecheck --workspace=shared && npm run typecheck --workspace=server && npm run typecheck --workspace=client",
+    "lint": "npm run lint --workspace=server && npm run lint --workspace=client",
+    "test": "npm run test --workspace=shared && npm run test --workspace=server && npm run test --workspace=client",
+    "test:unit": "npm run test:unit --workspace=server && npm run test:unit --workspace=client",
+    "test:integration": "npm run test:integration --workspace=server",
+    "test:security": "npm run test:security --workspace=server",
+    "test:accessibility": "npm run test:a11y --workspace=client",
+    "migrate": "node supabase/scripts/apply-migrations.mjs"
+  },
+  "keywords": [
+    "security",
+    "privacy",
+    "ai",
+    "safety",
+    "trust",
+    "trustguard"
+  ],
+  "author": "TrustGuard AI Team",
+  "license": "Apache-2.0"
+}

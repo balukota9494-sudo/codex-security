@@ -1,0 +1,112 @@
+:root {
+  --background: 222 47% 98%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 221 83% 53%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 221 83% 53%;
+  --radius: 0.75rem;
+
+  /* Status Colors */
+  --status-safe: 142 76% 36%;
+  --status-low: 200 95% 39%;
+  --status-caution: 38 92% 50%;
+  --status-high: 25 95% 53%;
+  --status-critical: 0 84% 60%;
+  --status-unknown: 215 16% 47%;
+}
+
+.dark {
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  --card: 224 71% 7%;
+  --card-foreground: 213 31% 91%;
+  --popover: 224 71% 7%;
+  --popover-foreground: 213 31% 91%;
+  --primary: 217 91% 60%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 222 47% 13%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 223 47% 11%;
+  --muted-foreground: 215 20% 65%;
+  --accent: 216 34% 17%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 216 34% 17%;
+  --input: 216 34% 17%;
+  --ring: 224 76% 48%;
+
+  --status-safe: 142 71% 45%;
+  --status-low: 199 89% 48%;
+  --status-caution: 45 93% 47%;
+  --status-high: 27 96% 61%;
+  --status-critical: 0 72% 51%;
+  --status-unknown: 215 20% 65%;
+}
+
+.high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 5%;
+  --card-foreground: 0 0% 100%;
+  --primary: 60 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --border: 0 0% 100%;
+  --input: 0 0% 100%;
+  --status-safe: 120 100% 50%;
+  --status-low: 180 100% 50%;
+  --status-caution: 60 100% 50%;
+  --status-high: 30 100% 50%;
+  --status-critical: 0 100% 50%;
+  --status-unknown: 0 0% 80%;
+}
+
+.colorblind {
+  --status-safe: 210 100% 50%; /* Pure Blue */
+  --status-low: 190 90% 45%;
+  --status-caution: 50 100% 45%; /* Amber */
+  --status-high: 280 85% 60%; /* Violet */
+  --status-critical: 20 95% 55%; /* Orange */
+  --status-unknown: 220 15% 50%;
+}
+
+/* Text Size Variations */
+html.text-small {
+  font-size: 14px;
+}
+html.text-medium {
+  font-size: 16px;
+}
+html.text-large {
+  font-size: 18px;
+}
+html.text-xlarge {
+  font-size: 20px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
