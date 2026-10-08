@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { User, Camera, Shield, Check, Loader2, Globe, Sparkles } from "lucide-react";
-import { apiRequest } from "../lib/apiClient";
+import { apiRequest, API_BASE } from "../lib/apiClient";
 import { supabase } from "../lib/supabaseClient";
 
 export const ProfilePage: React.FC = () => {
@@ -53,10 +53,10 @@ export const ProfilePage: React.FC = () => {
     const token = sessionData?.session?.access_token;
 
     try {
-      const res = await fetch("/api/profile/avatar", {
+      const res = await fetch(`${API_BASE}/api/profile/avatar`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: formData,
       });

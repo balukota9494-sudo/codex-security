@@ -1,22 +1,33 @@
 # TRUSTGUARD AI — PRODUCTION DEPLOYMENT GUIDE
 
-This guide details how to build and deploy TrustGuard AI into a production environment.
+This guide details how to build and deploy TrustGuard AI into a production environment with Render (Backend) and Vercel (Frontend).
 
 ---
 
-## 1. Production Architecture
+## 1. Public Production URLs
+
+| Component | Host | Public URL | Status Check |
+|---|---|---|---|
+| **Frontend Web App** | Vercel | [https://codex-security-ashy.vercel.app](https://codex-security-ashy.vercel.app) | Serves React SPA (Vite) |
+| **Backend API Core** | Render | [https://codex-security-api.onrender.com](https://codex-security-api.onrender.com) | `GET /api/health` |
+
+---
+
+## 2. Production Architecture
 
 ```
                     ┌────────────────────────────┐
-                    │  Cloudflare / Vercel Edge  │
+                    │       Vercel Edge          │
                     │   (Frontend Static CDN)    │
+                    │ codex-security-ashy.vercel.app
                     └─────────────┬──────────────┘
-                                  │ HTTPS
+                                  │ Direct Fetch / Proxy (/api/*)
                                   ▼
 ┌────────────────────────────┐         ┌────────────────────────────┐
 │      Node.js Express       │◄───────►│    Supabase Cloud PostgREST│
-│  (Docker / Fly.io / Render)│         │     (PostgreSQL 15 + RLS)  │
-└─────────────┬──────────────┘         └────────────────────────────┘
+│       Render Web           │         │     (PostgreSQL 15 + RLS)  │
+│ codex-security-api.onrender│         └────────────────────────────┘
+└─────────────┬──────────────┘
               │ HTTPS
               ▼
 ┌────────────────────────────┐
@@ -27,79 +38,57 @@ This guide details how to build and deploy TrustGuard AI into a production envir
 
 ---
 
-## 2. Environment Variables Checklist
+## 3. Backend Deployment on Render
 
-### Backend Server (`server/.env`):
-```ini
-PORT=3001
-NODE_ENV=production
-SUPABASE_URL=https://rxyxenrcccxbshcnkygf.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-GEMINI_API_KEY=AIzaSy...
-GEMINI_MODEL=gemini-2.5-flash
-USER_HASH_SALT=<secure-random-64-char-hex-salt>
-ALLOWED_ORIGIN=https://trustguard.ai
-```
+### Option A: 1-Click Blueprint Deploy (Recommended)
+1. Go to [Render Dashboard](https://dashboard.render.com).
+2. Click **New +** -> **Blueprint**.
+3. Connect your GitHub repository: `balukota9494-sudo/codex-security`.
+4. Render will automatically detect `render.yaml` and configure:
+   - Service Name: `codex-security-api`
+   - Build Command: `npm install && npm run build --workspace=@trustguard/shared && npm run build --workspace=@trustguard/server`
+   - Start Command: `node server/dist/index.js`
+   - Health Check Path: `/api/health`
+5. Click **Apply**.
 
-### Frontend Client (`client/.env`):
-```ini
-VITE_SUPABASE_URL=https://rxyxenrcccxbshcnkygf.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-VITE_API_BASE_URL=https://api.trustguard.ai
-```
-*(Note: Never place service keys or Gemini keys in client `.env`. The Vite build will abort if detected.)*
-
----
-
-## 3. Build & Packaging
-
-### Monorepo Build Command:
-```bash
-npm run build
-```
-This runs:
-1. `tsc -b` on `shared`
-2. `tsc` on `server` -> emits to `server/dist`
-3. `tsc && vite build` on `client` -> emits minified, tree-shaken static assets to `client/dist`
-
----
-
-## 4. Dockerfile for Backend Server
-
-```dockerfile
-FROM node:24-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-COPY shared/package*.json ./shared/
-COPY server/package*.json ./server/
-RUN npm ci
-
-COPY shared ./shared
-COPY server ./server
-RUN npm run build --workspace=shared
-RUN npm run build --workspace=server
-
-FROM node:24-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-COPY package*.json ./
-COPY shared/package*.json ./shared/
-COPY server/package*.json ./server/
-RUN npm ci --omit=dev
-
-COPY --from=builder /app/shared/dist ./shared/dist
-COPY --from=builder /app/server/dist ./server/dist
-
-EXPOSE 3001
-USER node
-CMD ["node", "server/dist/index.js"]
-```
+### Option B: Manual Web Service Setup
+1. In Render, select **New +** -> **Web Service**.
+2. Connect `balukota9494-sudo/codex-security`.
+3. Fill in the service configuration:
+   - **Name**: `codex-security-api`
+   - **Runtime**: `Node`
+   - **Branch**: `main`
+   - **Build Command**: `npm install && npm run build --workspace=@trustguard/shared && npm run build --workspace=@trustguard/server`
+   - **Start Command**: `node server/dist/index.js`
+   - **Health Check Path**: `/api/health`
+4. Add the required Environment Variables:
+   - `NODE_ENV`: `production`
+   - `PORT`: `10000`
+   - `SUPABASE_URL`: `https://rxyxenrcccxbshcnkygf.supabase.co`
+   - `SUPABASE_ANON_KEY`: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+   - `SUPABASE_SERVICE_ROLE_KEY`: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
+   - `GEMINI_API_KEY`: `AIzaSy...`
+   - `GEMINI_MODEL`: `gemini-2.5-flash`
+   - `CORS_ALLOWED_ORIGINS`: `https://codex-security-ashy.vercel.app,http://localhost:5173,https://*.vercel.app`
+   - `LOG_HASH_SALT`: `trustguard_secure_salt_772819_prod`
+5. Click **Create Web Service**.
 
 ---
 
-## 5. Health Checks & Monitoring
+## 4. Frontend Deployment on Vercel
 
-- **Liveness & Readiness**: Query `GET https://api.trustguard.ai/api/v1/health`
-- **Expected Status**: HTTP 200 with `{ "status": "ok", "services": { "database": "connected" } }`
-- **Sentry / APM**: Standard OpenTelemetry or Pino logger stream output.
+1. In the [Vercel Dashboard](https://vercel.com/dashboard), import `balukota9494-sudo/codex-security`.
+2. Vercel automatically detects `vercel.json` with settings:
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build --workspace=client`
+   - **Output Directory**: `client/dist`
+3. The API rewrite proxy in `vercel.json` transparently proxies `/api/:path*` to `https://codex-security-api.onrender.com/api/:path*`.
+4. (Optional) Set `VITE_API_BASE_URL` in Vercel project environment variables to `https://codex-security-api.onrender.com`.
+
+---
+
+## 5. Cold-Start Notes (Render Free Tier)
+
+Render free tier web services spin down after 15 minutes of inactivity:
+- The first request to a sleeping server may take **30-45 seconds** to spin up.
+- The TrustGuard client has built-in connection detection with user-friendly notices advising the user if the server is waking up, avoiding raw "Failed to fetch" crashes.

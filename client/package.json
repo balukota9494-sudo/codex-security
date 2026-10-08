@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "tsc --noEmit",
     "test": "vitest run",
+    "test:unit": "vitest run",
     "test:a11y": "vitest run src/tests/a11y"
   },
   "dependencies": {

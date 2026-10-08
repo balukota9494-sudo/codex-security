@@ -49,15 +49,30 @@ export function createApp(): Express {
     })
   );
 
-  // 3. Strict CORS allow-list
-  const allowedOrigins = env.CORS_ALLOWED_ORIGINS.split(",").map((o) => o.trim());
+  // 3. Robust CORS allow-list
+  const rawOrigins = env.CORS_ALLOWED_ORIGINS || "*";
+  const configuredOrigins = rawOrigins.split(",").map((o) => o.trim());
+
+  const isOriginAllowed = (origin: string | undefined): boolean => {
+    if (!origin) return true; // Server-to-server, curl, same-origin, probes
+    if (configuredOrigins.includes("*") || configuredOrigins.includes(origin)) return true;
+    // Allow all Vercel domains (production & preview deployments)
+    if (/^https:\/\/([a-zA-Z0-9-]+\.)*vercel\.app$/.test(origin)) return true;
+    // Allow Render domains
+    if (/^https:\/\/([a-zA-Z0-9-]+\.)*onrender\.com$/.test(origin)) return true;
+    // Allow local development hosts
+    if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return true;
+    if (/^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)) return true;
+    return false;
+  };
+
   app.use(
     cors({
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+        if (isOriginAllowed(origin)) {
           callback(null, true);
         } else {
-          callback(new Error("CORS origin forbidden by security policy."));
+          callback(null, false);
         }
       },
       credentials: true,
@@ -66,7 +81,29 @@ export function createApp(): Express {
     })
   );
 
-  // 4. Bounded body parser (64 KB cap)
+  // Handle preflight across all routes
+  app.options("*", cors());
+
+  // 4. Root health probes for Render and uptime checks
+  app.get("/", (_req, res) => {
+    res.json({
+      name: "TRUSTGUARD AI Core Server",
+      status: "healthy",
+      tagline: "Security You Can See. Privacy You Can Control. AI You Can Trust.",
+      health: "/api/health",
+      version: "1.0.0",
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  app.get("/health", (_req, res) => {
+    res.json({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+    });
+  });
+
+  // 5. Bounded body parser (64 KB cap)
   app.use(express.json({ limit: "64kb" }));
 
   // 5. Global IP Rate Limiting

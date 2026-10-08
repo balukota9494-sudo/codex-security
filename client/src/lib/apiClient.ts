@@ -1,6 +1,18 @@
 import { supabase } from "./supabaseClient";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+export const getApiBase = (): string => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "");
+  }
+  // In development, Vite dev proxy handles /api to localhost:8080
+  if (import.meta.env.DEV) {
+    return "";
+  }
+  // In production, fallback to Render backend service
+  return "https://codex-security-api.onrender.com";
+};
+
+export const API_BASE = getApiBase();
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -49,9 +61,18 @@ export async function apiRequest<T>(
       headers,
     });
   } catch (networkErr: any) {
-    const err = new Error(
-      networkErr?.message || "Network connection failure. Unable to reach TrustGuard API."
-    );
+    const isNetworkOrColdBoot =
+      networkErr?.name === "AbortError" ||
+      networkErr?.name === "TypeError" ||
+      networkErr?.message?.includes("Failed to fetch") ||
+      networkErr?.message?.includes("NetworkError") ||
+      networkErr?.message?.includes("Load failed");
+
+    const message = isNetworkOrColdBoot
+      ? "Unable to reach TrustGuard API backend. The service may be waking up on Render (free tier cold-start takes ~30-45s). Please wait a moment and try again."
+      : (networkErr?.message || "Network connection failure. Unable to reach TrustGuard API.");
+
+    const err = new Error(message);
     (err as any).code = "NETWORK_ERROR";
     (err as any).status = 0;
     throw err;
@@ -59,10 +80,18 @@ export async function apiRequest<T>(
 
   const contentType = response.headers.get("content-type") || "";
 
-  // If server responded with HTML (e.g. Vercel SPA rewrite fallback for missing backend route)
+  // If server responded with HTML (e.g. Vercel SPA rewrite fallback for missing backend route, or Render 502/503 cold boot)
   if (!contentType.includes("application/json")) {
+    let extraHint = "";
+    if (response.status === 502 || response.status === 503 || response.status === 504) {
+      extraHint = " Backend service is spinning up or unavailable on Render (cold start takes ~30-45s). Please retry in 30 seconds.";
+    } else if (response.status === 405) {
+      extraHint = " Method not allowed by host. Ensure backend proxy or VITE_API_BASE_URL points to Render API.";
+    } else if (response.status === 404) {
+      extraHint = " API endpoint route was not found on backend.";
+    }
     const err = new Error(
-      `API service returned non-JSON response (${response.status} ${response.statusText}). Check API configuration.`
+      `API service returned status ${response.status} (${response.statusText || "Non-JSON response"}).${extraHint}`
     );
     (err as any).code = "NON_JSON_RESPONSE";
     (err as any).status = response.status;
