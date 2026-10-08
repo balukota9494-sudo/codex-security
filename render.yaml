@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install && npm run build --workspace=@trustguard/shared && npm run build --workspace=@trustguard/server
+    buildCommand: npm install && npm run build:server
     startCommand: node server/dist/index.js
     healthCheckPath: /api/health
     autoDeploy: true
