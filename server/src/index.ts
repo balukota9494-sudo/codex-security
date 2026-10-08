@@ -5,7 +5,7 @@ import { runRetentionPurge } from "./services/retentionJobs.js";
 
 const app = createApp();
 
-const server = app.listen(env.PORT, () => {
+const server = app.listen(env.PORT, "0.0.0.0", () => {
   logger.info(
     { port: env.PORT, environment: env.NODE_ENV },
     "🛡️ TRUSTGUARD AI Core Server running"
