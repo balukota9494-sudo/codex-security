@@ -17,7 +17,7 @@ for (const key of Object.keys(process.env)) {
 }
 
 export default defineConfig({
-  base: "./",
+  base: "/",
   plugins: [react()],
   resolve: {
     alias: {
