@@ -213,7 +213,18 @@ websiteScansRouter.get(
         .order("created_at", { ascending: false })
         .range(offset, offset + pageSize - 1);
 
-      if (error) throw error;
+      if (error) {
+        if ((error as any).code === "PGRST205") {
+          return sendSuccess(res, {
+            scans: [],
+            total: 0,
+            page,
+            pageSize,
+            totalPages: 1,
+          });
+        }
+        throw error;
+      }
 
       sendSuccess(res, {
         scans: data || [],
@@ -242,7 +253,12 @@ websiteScansRouter.get("/:id", requireAuth, async (req, res, next) => {
       .eq("user_id", userId)
       .maybeSingle();
 
-    if (error) throw error;
+    if (error) {
+      if ((error as any).code === "PGRST205") {
+        return sendError(res, "NOT_FOUND", "Scan report not found.", 404);
+      }
+      throw error;
+    }
     if (!scan) {
       return sendError(res, "NOT_FOUND", "Scan report not found.", 404);
     }

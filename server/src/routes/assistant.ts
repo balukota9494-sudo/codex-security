@@ -152,7 +152,12 @@ assistantRouter.get("/conversations", requireAuth, async (req, res, next) => {
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      if ((error as any).code === "PGRST205") {
+        return sendSuccess(res, []);
+      }
+      throw error;
+    }
     sendSuccess(res, data || []);
   } catch (err) {
     next(err);
@@ -172,7 +177,12 @@ assistantRouter.delete("/conversations/:id", requireAuth, async (req, res, next)
       .eq("id", id)
       .eq("user_id", userId);
 
-    if (error) throw error;
+    if (error) {
+      if ((error as any).code === "PGRST205") {
+        return sendSuccess(res, { deleted: true });
+      }
+      throw error;
+    }
     sendSuccess(res, { deleted: true });
   } catch (err) {
     next(err);

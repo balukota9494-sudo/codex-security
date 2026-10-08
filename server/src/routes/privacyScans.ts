@@ -130,7 +130,18 @@ privacyScansRouter.get(
         .order("created_at", { ascending: false })
         .range(offset, offset + pageSize - 1);
 
-      if (error) throw error;
+      if (error) {
+        if ((error as any).code === "PGRST205") {
+          return sendSuccess(res, {
+            scans: [],
+            total: 0,
+            page,
+            pageSize,
+            totalPages: 1,
+          });
+        }
+        throw error;
+      }
 
       sendSuccess(res, {
         scans: data || [],

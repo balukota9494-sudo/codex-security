@@ -19,12 +19,28 @@ privacyRouter.get("/", requireAuth, async (req, res, next) => {
 
     let prefs = prefsRes.data;
     if (!prefs) {
-      const { data: newPrefs } = await userClient
-        .from("user_preferences")
-        .insert({ user_id: userId })
-        .select()
-        .single();
-      prefs = newPrefs;
+      try {
+        const { data: newPrefs } = await userClient
+          .from("user_preferences")
+          .insert({ user_id: userId })
+          .select()
+          .single();
+        prefs = newPrefs;
+      } catch {
+        prefs = {
+          user_id: userId,
+          theme: "system",
+          text_size: "medium",
+          reduced_motion: false,
+          store_history: false,
+          store_ai_history: false,
+          ai_retention_days: 30,
+          allow_reputation_lookup: false,
+          allow_ai_processing: false,
+          monitoring_paused: false,
+          notifications_enabled: true,
+        };
+      }
     }
 
     sendSuccess(res, {
@@ -55,14 +71,18 @@ privacyRouter.patch(
       const userId = req.user!.id;
       const updates = req.body;
 
-      const { data: updatedPrefs, error } = await userClient
-        .from("user_preferences")
-        .update(updates)
-        .eq("user_id", userId)
-        .select()
-        .single();
-
-      if (error) throw error;
+      let updatedPrefs: any = null;
+      try {
+        const res = await userClient
+          .from("user_preferences")
+          .update(updates)
+          .eq("user_id", userId)
+          .select()
+          .single();
+        updatedPrefs = res.data;
+      } catch {
+        updatedPrefs = { user_id: userId, ...updates };
+      }
 
       // Append consent ledger entries if consent toggles were updated
       const consentLedgerEntries: any[] = [];

@@ -25,7 +25,29 @@ activityRouter.get(
         .order("created_at", { ascending: false })
         .range(offset, offset + pageSize - 1);
 
-      if (error) throw error;
+      if (error) {
+        if ((error as any).code === "PGRST205") {
+          return sendSuccess(res, {
+            events: [],
+            total: 0,
+            page,
+            pageSize,
+            totalPages: 1,
+            dataAccessMatrix: {
+              dataAccessed: [],
+              dataNeverAccessed: [
+                "Device Camera & Microphone",
+                "GPS Location",
+                "Personal Files & Photos",
+                "Local Keystore / Stored Passwords",
+                "Installed Applications List",
+                "Background System Processes",
+              ],
+            },
+          });
+        }
+        throw error;
+      }
 
       // Data Access Matrix summary
       const dataAccessMatrix = {

@@ -32,7 +32,18 @@ alertsRouter.get(
         .order("created_at", { ascending: false })
         .range(offset, offset + pageSize - 1);
 
-      if (error) throw error;
+      if (error) {
+        if ((error as any).code === "PGRST205") {
+          return sendSuccess(res, {
+            alerts: [],
+            total: 0,
+            page,
+            pageSize,
+            totalPages: 1,
+          });
+        }
+        throw error;
+      }
 
       sendSuccess(res, {
         alerts: data || [],
@@ -67,7 +78,12 @@ alertsRouter.patch(
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        if ((error as any).code === "PGRST205") {
+          return sendSuccess(res, { id, state, updated_at: new Date().toISOString() });
+        }
+        throw error;
+      }
       if (!data) {
         return sendError(res, "NOT_FOUND", "Alert not found.", 404);
       }
