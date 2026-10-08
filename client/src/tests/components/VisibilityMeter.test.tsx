@@ -40,4 +40,24 @@ describe("VisibilityMeter Component", () => {
     expect(screen.getByText("40%")).toBeInTheDocument();
     expect(screen.getByText("Assessment Incomplete")).toBeInTheDocument();
   });
+
+  it("safely handles undefined or missing missingCritical array without throwing", () => {
+    const incompleteVisibility = {
+      percent: 21,
+      assessmentComplete: true,
+      explanation: "Browser Sandbox Perimeter.",
+    } as any;
+
+    expect(() => {
+      render(<VisibilityMeter visibility={incompleteVisibility} />);
+    }).not.toThrow();
+
+    expect(screen.getByText("21%")).toBeInTheDocument();
+    expect(screen.getByText("Browser Sandbox Perimeter.")).toBeInTheDocument();
+  });
+
+  it("safely renders null when visibility is null or undefined", () => {
+    const { container } = render(<VisibilityMeter visibility={null} />);
+    expect(container.firstChild).toBeNull();
+  });
 });

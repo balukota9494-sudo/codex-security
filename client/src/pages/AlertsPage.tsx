@@ -12,8 +12,8 @@ export const AlertsPage: React.FC = () => {
     setLoading(true);
     try {
       const q = stateFilter && stateFilter !== "all" ? `&status=${stateFilter}` : "";
-      const data = await apiRequest<any>(`/api/alerts?pageSize=50${q}`);
-      setAlerts(data.alerts || []);
+      const data = await apiRequest<any>(`/api/alerts?pageSize=50${q}`).catch(() => ({ alerts: [] }));
+      setAlerts(Array.isArray(data?.alerts) ? data.alerts : []);
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ export const AlertsPage: React.FC = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
           <p className="text-xs text-muted-foreground font-medium">Loading alerts...</p>
         </div>
-      ) : alerts.length === 0 ? (
+      ) : (!Array.isArray(alerts) || alerts.length === 0) ? (
         <div className="p-12 text-center text-xs text-muted-foreground border border-dashed border-border rounded-2xl space-y-2">
           <ShieldAlert className="w-8 h-8 text-muted-foreground mx-auto opacity-50" />
           <p className="font-bold text-foreground text-sm">No {filterState} alerts</p>
@@ -89,7 +89,7 @@ export const AlertsPage: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {alerts.map((alert) => (
+          {(Array.isArray(alerts) ? alerts : []).map((alert) => (
             <div
               key={alert.id}
               className="p-6 rounded-2xl border border-border bg-card shadow-sm space-y-4"
@@ -133,7 +133,7 @@ export const AlertsPage: React.FC = () => {
               </div>
 
               {/* Action Steps */}
-              {alert.what_to_do?.length > 0 && (
+              {Array.isArray(alert?.what_to_do) && alert.what_to_do.length > 0 && (
                 <div className="space-y-1.5">
                   <span className="text-xs font-bold text-foreground block">
                     Recommended Steps:

@@ -32,4 +32,14 @@ describe("PiiFindingsTable Component", () => {
     expect(screen.getByText("EMAIL")).toBeInTheDocument();
     expect(screen.getByText("us****r@example.com")).toBeInTheDocument();
   });
+
+  it("safely handles undefined findings without throwing", () => {
+    expect(() => {
+      render(<PiiFindingsTable findings={undefined as any} />);
+    }).not.toThrow();
+    expect(
+      screen.getByText(/No obvious sensitive data or credential patterns observed/)
+    ).toBeInTheDocument();
+  });
 });
+

@@ -5,11 +5,13 @@ import { ADVISORY } from "@trustguard/shared";
 
 export const TransparencyPage: React.FC = () => {
   const [activityData, setActivityData] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     apiRequest<any>("/api/activity?pageSize=10")
-      .then(setActivityData)
-      .catch(() => {});
+      .then((data) => setActivityData(data))
+      .catch(() => setActivityData({ events: [] }))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -107,33 +109,40 @@ export const TransparencyPage: React.FC = () => {
           Every time TRUSTGUARD checks a URL or consults an AI provider, a non-sensitive audit event is logged:
         </p>
 
-        {activityData?.events?.length === 0 ? (
+        {loading ? (
+          <div className="p-6 text-center text-xs text-muted-foreground">
+            Loading activity log...
+          </div>
+        ) : (!Array.isArray(activityData?.events) || activityData.events.length === 0) ? (
           <div className="p-6 text-center text-xs text-muted-foreground border border-dashed border-border rounded-xl">
             No activity events recorded yet. Run a website or privacy check to see real-time transparency events.
           </div>
         ) : (
           <div className="space-y-2">
-            {activityData?.events?.map((ev: any) => (
-              <div
-                key={ev.id}
-                className="p-3 rounded-xl border border-border/70 bg-background/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
-              >
-                <div className="space-y-0.5">
-                  <span className="font-bold text-foreground block">{ev.event_type}</span>
-                  <span className="text-muted-foreground">{ev.summary}</span>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="text-[11px] text-muted-foreground block">
-                    {new Date(ev.created_at).toLocaleTimeString()}
-                  </span>
-                  {ev.data_sent_to?.length > 0 && (
-                    <span className="text-[10px] text-primary font-semibold">
-                      Sent to: {ev.data_sent_to.join(", ")}
+            {(Array.isArray(activityData?.events) ? activityData.events : []).map((ev: any) => {
+              const dataSentTo = Array.isArray(ev?.data_sent_to) ? ev.data_sent_to : [];
+              return (
+                <div
+                  key={ev.id || Math.random().toString()}
+                  className="p-3 rounded-xl border border-border/70 bg-background/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs"
+                >
+                  <div className="space-y-0.5">
+                    <span className="font-bold text-foreground block">{ev.event_type}</span>
+                    <span className="text-muted-foreground">{ev.summary}</span>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="text-[11px] text-muted-foreground block">
+                      {ev.created_at ? new Date(ev.created_at).toLocaleTimeString() : ""}
                     </span>
-                  )}
+                    {dataSentTo.length > 0 && (
+                      <span className="text-[10px] text-primary font-semibold">
+                        Sent to: {dataSentTo.join(", ")}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

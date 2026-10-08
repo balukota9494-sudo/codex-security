@@ -204,67 +204,70 @@ export const EmergencyPage: React.FC = () => {
               <span>DO THESE STEPS FIRST:</span>
             </h3>
             <div className="space-y-2">
-              {guidance.deterministicChecklist?.immediateSteps?.map(
-                (step: string, idx: number) => (
-                  <div
-                    key={idx}
-                    className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs sm:text-sm font-bold text-foreground flex items-start gap-3"
-                  >
-                    <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0 font-extrabold mt-0.5">
-                      {idx + 1}
-                    </span>
-                    <span>{step}</span>
-                  </div>
-                )
-              )}
+              {Array.isArray(guidance?.deterministicChecklist?.immediateSteps) &&
+                guidance.deterministicChecklist.immediateSteps.map(
+                  (step: string, idx: number) => (
+                    <div
+                      key={idx}
+                      className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs sm:text-sm font-bold text-foreground flex items-start gap-3"
+                    >
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0 font-extrabold mt-0.5">
+                        {idx + 1}
+                      </span>
+                      <span>{step}</span>
+                    </div>
+                  )
+                )}
             </div>
           </div>
 
           {/* Section 2: What to AVOID */}
-          {guidance.deterministicChecklist?.avoidActions?.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-red-600 dark:text-red-400 flex items-center gap-1.5">
-                <XCircle className="w-4 h-4" />
-                <span>WHAT TO AVOID (DO NOT DO):</span>
-              </h3>
-              <div className="space-y-1.5">
-                {guidance.deterministicChecklist.avoidActions.map(
-                  (avoid: string, idx: number) => (
-                    <div
-                      key={idx}
-                      className="p-3 rounded-lg bg-red-500/5 dark:bg-red-500/10 border border-red-500/20 text-xs font-medium text-foreground flex items-start gap-2.5"
-                    >
-                      <span className="text-red-500 font-bold">✕</span>
-                      <span>{avoid}</span>
-                    </div>
-                  )
-                )}
+          {Array.isArray(guidance?.deterministicChecklist?.avoidActions) &&
+            guidance.deterministicChecklist.avoidActions.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-red-600 dark:text-red-400 flex items-center gap-1.5">
+                  <XCircle className="w-4 h-4" />
+                  <span>WHAT TO AVOID (DO NOT DO):</span>
+                </h3>
+                <div className="space-y-1.5">
+                  {guidance.deterministicChecklist.avoidActions.map(
+                    (avoid: string, idx: number) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-lg bg-red-500/5 dark:bg-red-500/10 border border-red-500/20 text-xs font-medium text-foreground flex items-start gap-2.5"
+                      >
+                        <span className="text-red-500 font-bold">✕</span>
+                        <span>{avoid}</span>
+                      </div>
+                    )
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Section 3: Follow-up Next Steps */}
-          {guidance.deterministicChecklist?.nextSteps?.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="text-xs font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
-                <ArrowRight className="w-4 h-4" />
-                <span>AFTER IMMEDIATE STEPS ARE COMPLETE:</span>
-              </h3>
-              <div className="space-y-1.5">
-                {guidance.deterministicChecklist.nextSteps.map(
-                  (nextStep: string, idx: number) => (
-                    <div
-                      key={idx}
-                      className="p-3 rounded-lg bg-muted/50 text-xs text-muted-foreground flex items-start gap-2.5"
-                    >
-                      <span className="text-primary font-bold">•</span>
-                      <span>{nextStep}</span>
-                    </div>
-                  )
-                )}
+          {Array.isArray(guidance?.deterministicChecklist?.nextSteps) &&
+            guidance.deterministicChecklist.nextSteps.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                  <ArrowRight className="w-4 h-4" />
+                  <span>AFTER IMMEDIATE STEPS ARE COMPLETE:</span>
+                </h3>
+                <div className="space-y-1.5">
+                  {guidance.deterministicChecklist.nextSteps.map(
+                    (nextStep: string, idx: number) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-lg bg-muted/50 text-xs text-muted-foreground flex items-start gap-2.5"
+                      >
+                        <span className="text-primary font-bold">•</span>
+                        <span>{nextStep}</span>
+                      </div>
+                    )
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Official Channel Reminder */}
           <div className="p-4 rounded-xl bg-muted/40 border border-border text-center text-xs text-muted-foreground">

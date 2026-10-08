@@ -218,13 +218,14 @@ export const PrivacyCheckPage: React.FC = () => {
                 <p className="text-xs text-foreground font-medium leading-relaxed">
                   {scanResult.aiExplanation.overview}
                 </p>
-                {scanResult.aiExplanation.perType?.map((item: any, idx: number) => (
-                  <div key={idx} className="p-2.5 rounded-lg bg-background/60 text-xs space-y-1">
-                    <span className="font-bold text-foreground block">{item.piiType} Risk:</span>
-                    <p className="text-muted-foreground">{item.risk}</p>
-                    <p className="text-primary font-semibold">Advice: {item.advice}</p>
-                  </div>
-                ))}
+                {Array.isArray(scanResult.aiExplanation.perType) &&
+                  scanResult.aiExplanation.perType.map((item: any, idx: number) => (
+                    <div key={idx} className="p-2.5 rounded-lg bg-background/60 text-xs space-y-1">
+                      <span className="font-bold text-foreground block">{item.piiType} Risk:</span>
+                      <p className="text-muted-foreground">{item.risk}</p>
+                      <p className="text-primary font-semibold">Advice: {item.advice}</p>
+                    </div>
+                  ))}
               </div>
             )}
           </div>

@@ -33,9 +33,13 @@ export const DashboardPage: React.FC = () => {
           apiRequest<any>("/api/alerts?pageSize=3").catch(() => ({ alerts: [] })),
         ]);
 
-        if (blindSpotsRes) setVisibility(blindSpotsRes.visibility);
-        setRecentScans(scansRes?.scans || []);
-        setRecentAlerts(alertsRes?.alerts || []);
+        if (blindSpotsRes && typeof blindSpotsRes === "object" && blindSpotsRes.visibility) {
+          setVisibility(blindSpotsRes.visibility);
+        } else {
+          setVisibility(null);
+        }
+        setRecentScans(Array.isArray(scansRes?.scans) ? scansRes.scans : []);
+        setRecentAlerts(Array.isArray(alertsRes?.alerts) ? alertsRes.alerts : []);
       } finally {
         setLoading(false);
       }
@@ -185,13 +189,13 @@ export const DashboardPage: React.FC = () => {
             </Link>
           </div>
 
-          {recentScans.length === 0 ? (
+          {(!Array.isArray(recentScans) || recentScans.length === 0) ? (
             <div className="p-8 text-center text-xs text-muted-foreground border border-dashed border-border rounded-xl">
               No recent website checks stored. Checks are only saved when history storage is enabled in settings.
             </div>
           ) : (
             <div className="space-y-2">
-              {recentScans.map((scan) => (
+              {(Array.isArray(recentScans) ? recentScans : []).map((scan) => (
                 <Link
                   key={scan.id}
                   to={`/app/reports/${scan.id}`}
@@ -228,13 +232,13 @@ export const DashboardPage: React.FC = () => {
             </Link>
           </div>
 
-          {recentAlerts.length === 0 ? (
+          {(!Array.isArray(recentAlerts) || recentAlerts.length === 0) ? (
             <div className="p-8 text-center text-xs text-muted-foreground border border-dashed border-border rounded-xl">
               No open security alerts. Automated duplicate suppression prevents alert fatigue.
             </div>
           ) : (
             <div className="space-y-2">
-              {recentAlerts.map((alert) => (
+              {(Array.isArray(recentAlerts) ? recentAlerts : []).map((alert) => (
                 <div
                   key={alert.id}
                   className="p-3 rounded-xl border border-border/70 bg-background/50 space-y-1 text-xs"

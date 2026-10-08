@@ -30,9 +30,9 @@ export const HistoryPage: React.FC = () => {
       const st = statusFilter !== "ALL" ? `&status=${statusFilter}` : "";
       const data = await apiRequest<any>(
         `/api/website-scans?page=${page}&pageSize=15${q}${st}`
-      );
-      setScans(data.scans || []);
-      setTotalPages(data.totalPages || 1);
+      ).catch(() => ({ scans: [], totalPages: 1 }));
+      setScans(Array.isArray(data?.scans) ? data.scans : []);
+      setTotalPages(typeof data?.totalPages === "number" ? data.totalPages : 1);
     } finally {
       setLoading(false);
     }
@@ -125,7 +125,7 @@ export const HistoryPage: React.FC = () => {
           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
           <p className="text-xs text-muted-foreground font-medium">Loading history...</p>
         </div>
-      ) : scans.length === 0 ? (
+      ) : (!Array.isArray(scans) || scans.length === 0) ? (
         <div className="p-16 text-center text-xs text-muted-foreground border border-dashed border-border rounded-2xl space-y-2">
           <Globe className="w-8 h-8 text-muted-foreground mx-auto opacity-50" />
           <p className="font-bold text-foreground text-sm">No scans found</p>
@@ -135,7 +135,7 @@ export const HistoryPage: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-3">
-          {scans.map((scan) => (
+          {(Array.isArray(scans) ? scans : []).map((scan) => (
             <div
               key={scan.id}
               className="p-4 sm:p-5 rounded-2xl border border-border bg-card/70 hover:border-primary/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm"

@@ -37,6 +37,13 @@ export const AdminPage: React.FC = () => {
     );
   }
 
+  const scanAggregates = Array.isArray(aggregates?.scanAggregates)
+    ? aggregates.scanAggregates
+    : [];
+  const alertAggregates = Array.isArray(aggregates?.alertAggregates)
+    ? aggregates.alertAggregates
+    : [];
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Header */}
@@ -59,7 +66,7 @@ export const AdminPage: React.FC = () => {
             Total Daily Scan Records
           </span>
           <span className="text-3xl font-black text-foreground block">
-            {aggregates?.scanAggregates?.reduce((a: number, b: any) => a + Number(b.scans), 0) || 0}
+            {scanAggregates.reduce((a: number, b: any) => a + Number(b.scans || 0), 0)}
           </span>
         </div>
 
@@ -68,7 +75,7 @@ export const AdminPage: React.FC = () => {
             Total Alert Events
           </span>
           <span className="text-3xl font-black text-foreground block">
-            {aggregates?.alertAggregates?.reduce((a: number, b: any) => a + Number(b.alerts), 0) || 0}
+            {alertAggregates.reduce((a: number, b: any) => a + Number(b.alerts || 0), 0)}
           </span>
         </div>
 
@@ -97,7 +104,7 @@ export const AdminPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {aggregates?.scanAggregates?.map((row: any, idx: number) => (
+              {scanAggregates.map((row: any, idx: number) => (
                 <tr key={idx} className="hover:bg-muted/20">
                   <td className="py-2.5 px-4 font-mono">
                     {new Date(row.day).toLocaleDateString()}

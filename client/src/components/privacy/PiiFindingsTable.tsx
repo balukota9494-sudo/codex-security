@@ -9,8 +9,9 @@ interface PiiItem {
   severity: Severity;
 }
 
-export const PiiFindingsTable: React.FC<{ findings: PiiItem[] }> = ({ findings }) => {
-  if (findings.length === 0) {
+export const PiiFindingsTable: React.FC<{ findings?: PiiItem[] | null }> = ({ findings = [] }) => {
+  const safeFindings = Array.isArray(findings) ? findings : [];
+  if (safeFindings.length === 0) {
     return (
       <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border rounded-xl">
         No obvious sensitive data or credential patterns observed in this text.
@@ -50,7 +51,7 @@ export const PiiFindingsTable: React.FC<{ findings: PiiItem[] }> = ({ findings }
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {findings.map((item, idx) => (
+            {safeFindings.map((item, idx) => (
               <tr key={idx} className="hover:bg-muted/30 transition-colors">
                 <td className="py-3 px-4 font-semibold text-foreground flex items-center gap-2">
                   {getIcon(item.piiType)}

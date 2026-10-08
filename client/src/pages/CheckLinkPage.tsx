@@ -147,11 +147,11 @@ export const CheckLinkPage: React.FC = () => {
       {scanResult && (
         <div className="space-y-4 animate-in fade-in duration-300">
           <h2 className="text-lg font-extrabold text-foreground tracking-tight">
-            Assessment for Link received via {scanResult.sourceApp.toUpperCase()}
+            Assessment for Link received via {scanResult.sourceApp ? scanResult.sourceApp.toUpperCase() : "EXTERNAL SOURCE"}
           </h2>
 
           {/* Indicators list */}
-          {scanResult.indicators && scanResult.indicators.length > 0 && (
+          {Array.isArray(scanResult.indicators) && scanResult.indicators.length > 0 && (
             <div className="p-4 rounded-xl border border-border bg-card space-y-2">
               <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
                 Observed Link Indicators
